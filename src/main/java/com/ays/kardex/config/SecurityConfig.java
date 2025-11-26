@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +40,34 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    new ObjectMapper().writeValueAsString(
+                                            Map.of(
+                                                    "status", 401,
+                                                    "mensaje", "No autorizado - Token inválido o no proporcionado",
+                                                    "path", request.getRequestURI()
+                                            )
+                                    )
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    new ObjectMapper().writeValueAsString(
+                                            Map.of(
+                                                    "status", 403,
+                                                    "mensaje", "Acceso denegado",
+                                                    "path", request.getRequestURI()
+                                            )
+                                    )
+                            );
+                        })
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
