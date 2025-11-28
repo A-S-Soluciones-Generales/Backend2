@@ -17,6 +17,9 @@ public class ProductoDTO {
     @Schema(description = "Descripción del producto", example = "Laptop HP con 16GB RAM")
     private String descripcion;
 
+    @Schema(description = "Código SKU único del producto", example = "SKU-HP-001")
+    private String sku;
+
     @Schema(description = "Precio del producto", example = "1500.00")
     private Double precio;
 
