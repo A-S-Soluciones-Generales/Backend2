@@ -2,8 +2,11 @@ package com.ays.kardex.controller;
 
 import com.ays.kardex.dto.transfer.TransferInitiationRequest;
 import com.ays.kardex.dto.transfer.TransferResponse;
+import com.ays.kardex.exception.ApiError;
 import com.ays.kardex.service.TransferService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +30,8 @@ public class TransferController {
     @Operation(summary = "Iniciar una transferencia de stock")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Transferencia creada y stock descontado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos o sin stock")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos o sin stock", content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Producto o sede no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<TransferResponse> iniciarTransferencia(@Valid @RequestBody TransferInitiationRequest request) {
         TransferResponse response = transferService.iniciarTransferencia(request);
@@ -38,7 +42,8 @@ public class TransferController {
     @Operation(summary = "Confirmar la recepción de una transferencia")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transferencia confirmada y stock actualizado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos o sin autorización")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos o sin autorización", content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Transferencia no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<TransferResponse> confirmarTransferencia(@PathVariable("id") Long id) {
         TransferResponse response = transferService.confirmarTransferencia(id);

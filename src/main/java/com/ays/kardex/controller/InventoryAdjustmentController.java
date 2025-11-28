@@ -2,8 +2,11 @@ package com.ays.kardex.controller;
 
 import com.ays.kardex.dto.adjustment.InventoryAdjustmentRequest;
 import com.ays.kardex.dto.adjustment.InventoryAdjustmentResponse;
+import com.ays.kardex.exception.ApiError;
 import com.ays.kardex.service.InventoryAdjustmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +33,8 @@ public class InventoryAdjustmentController {
     @Operation(summary = "Registrar un ajuste de inventario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ajuste registrado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Producto o sede no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<InventoryAdjustmentResponse> registrarAjuste(
             @Valid @RequestBody InventoryAdjustmentRequest request) {

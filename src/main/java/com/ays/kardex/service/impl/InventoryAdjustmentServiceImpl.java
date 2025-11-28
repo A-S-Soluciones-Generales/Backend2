@@ -8,6 +8,7 @@ import com.ays.kardex.entity.Producto;
 import com.ays.kardex.entity.Sede;
 import com.ays.kardex.entity.Usuario;
 import com.ays.kardex.exception.BadRequestException;
+import com.ays.kardex.exception.NotFoundException;
 import com.ays.kardex.repository.InventoryAdjustmentRepository;
 import com.ays.kardex.repository.ProductoRepository;
 import com.ays.kardex.repository.SedeRepository;
@@ -38,7 +39,7 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
     @Override
     public InventoryAdjustmentResponse registrarAjuste(InventoryAdjustmentRequest request) {
         Producto producto = productoRepository.findById(request.getProductoId())
-                .orElseThrow(() -> new BadRequestException("El producto indicado no existe"));
+                .orElseThrow(() -> new NotFoundException("El producto indicado no existe"));
 
         Usuario usuario = obtenerUsuarioAutenticado();
         Sede sedeMovimiento = resolverSedeMovimiento(request.getSedeId(), usuario, producto);
@@ -87,7 +88,7 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
 
         if (sedeId != null) {
             return sedeRepository.findById(sedeId)
-                    .orElseThrow(() -> new BadRequestException("La sede indicada no existe"));
+                    .orElseThrow(() -> new NotFoundException("La sede indicada no existe"));
         }
 
         if (producto.getSede() != null) {
