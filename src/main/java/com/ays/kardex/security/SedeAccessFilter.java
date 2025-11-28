@@ -42,15 +42,35 @@ public class SedeAccessFilter extends OncePerRequestFilter {
     private boolean isSedeAllowed(HttpServletRequest request, Long sedeId) {
         String path = request.getRequestURI();
         if (path.startsWith("/api/kardex/sede/")) {
+            return validarUltimoSegmento(path, sedeId);
+        }
+        if (path.startsWith("/api/sedes/")) {
+            return validarSegmentoSede(path, sedeId);
+        }
+        return true;
+    }
+
+    private boolean validarSegmentoSede(String path, Long sedeId) {
+        String[] segments = path.split("/");
+        if (segments.length > 3) {
             try {
-                String[] segments = path.split("/");
-                String idSegment = segments[segments.length - 1];
-                Long requestedSede = Long.parseLong(idSegment);
+                Long requestedSede = Long.parseLong(segments[3]);
                 return requestedSede.equals(sedeId);
             } catch (NumberFormatException ignored) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean validarUltimoSegmento(String path, Long sedeId) {
+        try {
+            String[] segments = path.split("/");
+            String idSegment = segments[segments.length - 1];
+            Long requestedSede = Long.parseLong(idSegment);
+            return requestedSede.equals(sedeId);
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
     }
 }
