@@ -37,6 +37,9 @@ public class Usuario implements UserDetails {
     @Column(length = 100)
     private String apellido;
 
+    @Column(name = "documento", length = 50, unique = true)
+    private String documento;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
