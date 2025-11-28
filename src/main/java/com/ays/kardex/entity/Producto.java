@@ -31,6 +31,9 @@ public class Producto {
     @Column(name = "average_cost", nullable = false)
     private Double averageCost = 0.0;
 
+    @Column(name = "min_stock")
+    private Integer minStock;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sede_id")
     private Sede sede;
