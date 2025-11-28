@@ -16,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -28,25 +31,27 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse registrar(RegistroRequest request) {
-        // Verificar si el email ya existe
         if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("El email ya está registrado");
         }
 
-        // Crear nuevo usuario
+        if (usuarioRepository.existsByRole(Usuario.Role.GLOBAL_ADMIN)) {
+            throw new BadRequestException("Ya existe un administrador global registrado");
+        }
+
         Usuario usuario = Usuario.builder()
                 .nombre(request.getNombre())
                 .apellido(request.getApellido())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Usuario.Role.USER)
+                .role(Usuario.Role.GLOBAL_ADMIN)
                 .activo(true)
                 .build();
 
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
-        // Generar token JWT
-        String jwtToken = jwtService.generateToken(usuarioGuardado);
+        Map<String, Object> claims = construirClaims(usuarioGuardado);
+        String jwtToken = jwtService.generateToken(claims, usuarioGuardado);
 
         return AuthResponse.builder()
                 .token(jwtToken)
@@ -56,6 +61,8 @@ public class AuthServiceImpl implements AuthService {
                 .nombre(usuarioGuardado.getNombre())
                 .apellido(usuarioGuardado.getApellido())
                 .role(usuarioGuardado.getRole().name())
+                .companyId(null)
+                .sedeId(null)
                 .mensaje("Usuario registrado exitosamente")
                 .build();
     }
@@ -80,7 +87,8 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("La cuenta está desactivada");
         }
 
-        String jwtToken = jwtService.generateToken(usuario);
+        Map<String, Object> claims = construirClaims(usuario);
+        String jwtToken = jwtService.generateToken(claims, usuario);
 
         return AuthResponse.builder()
                 .token(jwtToken)
@@ -90,7 +98,18 @@ public class AuthServiceImpl implements AuthService {
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
                 .role(usuario.getRole().name())
+                .companyId(usuario.getCompany() != null ? usuario.getCompany().getId() : null)
+                .sedeId(usuario.getSede() != null ? usuario.getSede().getId() : null)
                 .mensaje("Inicio de sesión exitoso")
                 .build();
+    }
+
+    private Map<String, Object> construirClaims(Usuario usuario) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("user_id", usuario.getId());
+        claims.put("role", usuario.getRole().name());
+        claims.put("company_id", usuario.getCompany() != null ? usuario.getCompany().getId() : null);
+        claims.put("sede_id", usuario.getSede() != null ? usuario.getSede().getId() : null);
+        return claims;
     }
 }

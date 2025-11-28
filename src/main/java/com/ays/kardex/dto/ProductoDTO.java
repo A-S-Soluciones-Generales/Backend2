@@ -22,4 +22,7 @@ public class ProductoDTO {
 
     @Schema(description = "Cantidad en stock", example = "50")
     private Integer stock;
+
+    @Schema(description = "Identificador de la sede", example = "1")
+    private Long sedeId;
 }
