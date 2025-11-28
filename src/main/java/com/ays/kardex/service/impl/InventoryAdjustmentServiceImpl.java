@@ -1,5 +1,6 @@
 package com.ays.kardex.service.impl;
 
+import com.ays.kardex.audit.AuditLogContext;
 import com.ays.kardex.dto.adjustment.InventoryAdjustmentRequest;
 import com.ays.kardex.dto.adjustment.InventoryAdjustmentResponse;
 import com.ays.kardex.entity.InventoryAdjustment;
@@ -13,6 +14,8 @@ import com.ays.kardex.repository.SedeRepository;
 import com.ays.kardex.service.InventoryAdjustmentService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,7 +47,8 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
             throw new BadRequestException("El producto no pertenece a la sede indicada");
         }
 
-        int nuevoStock = calcularNuevoStock(producto.getStock(), request.getCantidad(), request.getTipo());
+        int stockActual = producto.getStock();
+        int nuevoStock = calcularNuevoStock(stockActual, request.getCantidad(), request.getTipo());
         BigDecimal valorImpacto = calcularImpactoValor(producto, request.getCantidad(), request.getTipo());
 
         producto.setStock(nuevoStock);
@@ -61,6 +65,7 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
         adjustment.setStockResulting(nuevoStock);
 
         InventoryAdjustment guardado = inventoryAdjustmentRepository.save(adjustment);
+        registrarAuditoria(producto, sedeMovimiento, request, stockActual, nuevoStock);
         return mapearRespuesta(guardado);
     }
 
@@ -121,5 +126,18 @@ public class InventoryAdjustmentServiceImpl implements InventoryAdjustmentServic
                 .sedeId(adjustment.getSede().getId())
                 .fechaCreacion(adjustment.getFechaCreacion())
                 .build();
+    }
+
+    private void registrarAuditoria(Producto producto, Sede sede, InventoryAdjustmentRequest request,
+                                    int stockAnterior, int stockNuevo) {
+        Map<String, Object> detalles = new HashMap<>();
+        detalles.put("productoId", producto.getId());
+        detalles.put("sedeId", sede.getId());
+        detalles.put("stockAnterior", stockAnterior);
+        detalles.put("stockNuevo", stockNuevo);
+        detalles.put("cantidad", request.getCantidad());
+        detalles.put("tipo", request.getTipo());
+        detalles.put("reasonCode", request.getReasonCode());
+        AuditLogContext.register("CREATE_ADJUSTMENT", detalles);
     }
 }

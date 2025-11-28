@@ -30,6 +30,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecio(productoDTO.getPrecio());
         producto.setStock(productoDTO.getStock());
+        producto.setMinStock(productoDTO.getMinStock());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof Usuario usuario) {
