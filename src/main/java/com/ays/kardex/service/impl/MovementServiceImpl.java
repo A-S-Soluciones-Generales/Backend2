@@ -11,6 +11,8 @@ import com.ays.kardex.repository.MovementRepository;
 import com.ays.kardex.repository.ProductoRepository;
 import com.ays.kardex.repository.SedeRepository;
 import com.ays.kardex.service.MovementService;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,11 @@ public class MovementServiceImpl implements MovementService {
         }
 
         int cantidad = request.getCantidad();
+        if (request.getTipo() == Movement.MovementType.COMPRA) {
+            BigDecimal nuevoCostoPromedio = recalcularCostoPromedio(producto, cantidad, request.getCostoUnitario());
+            producto.setAverageCost(nuevoCostoPromedio.doubleValue());
+        }
+
         int nuevoStock = calcularNuevoStock(producto.getStock(), cantidad, request.getTipo());
         producto.setStock(nuevoStock);
         productoRepository.save(producto);
@@ -55,6 +62,7 @@ public class MovementServiceImpl implements MovementService {
         movement.setSede(sedeMovimiento);
         movement.setQuantity(cantidad);
         movement.setType(request.getTipo());
+        movement.setUnitCost(request.getCostoUnitario());
         movement.setStockResulting(nuevoStock);
 
         Movement guardado = movementRepository.save(movement);
@@ -138,6 +146,26 @@ public class MovementServiceImpl implements MovementService {
             throw new BadRequestException("Stock insuficiente para la venta");
         }
         return stockActual - cantidad;
+    }
+
+    private BigDecimal recalcularCostoPromedio(Producto producto, int cantidad, Double costoIngreso) {
+        if (costoIngreso == null || costoIngreso <= 0) {
+            throw new BadRequestException("Debe indicar un costo unitario válido para las compras");
+        }
+
+        BigDecimal costoActual = BigDecimal.valueOf(
+                producto.getAverageCost() != null ? producto.getAverageCost() : 0.0
+        );
+        BigDecimal totalActual = costoActual.multiply(BigDecimal.valueOf(producto.getStock()));
+        BigDecimal totalIngreso = BigDecimal.valueOf(costoIngreso).multiply(BigDecimal.valueOf(cantidad));
+
+        int stockTotal = producto.getStock() + cantidad;
+        if (stockTotal <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        return totalActual.add(totalIngreso)
+                .divide(BigDecimal.valueOf(stockTotal), 4, RoundingMode.HALF_UP);
     }
 
     private MovementResponse mapearRespuesta(Movement movement) {

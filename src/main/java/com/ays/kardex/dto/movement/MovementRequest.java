@@ -27,6 +27,9 @@ public class MovementRequest {
     @Schema(description = "Cantidad de unidades", example = "5")
     private Integer cantidad;
 
+    @Schema(description = "Costo unitario para compras", example = "15.75")
+    private Double costoUnitario;
+
     @Schema(description = "Identificador de la sede. Se ignora para vendedores", example = "2")
     private Long sedeId;
 }
