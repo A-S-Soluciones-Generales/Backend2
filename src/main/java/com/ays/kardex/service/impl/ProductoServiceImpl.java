@@ -5,6 +5,7 @@ import com.ays.kardex.entity.Producto;
 import com.ays.kardex.entity.Sede;
 import com.ays.kardex.entity.Usuario;
 import com.ays.kardex.exception.BadRequestException;
+import com.ays.kardex.exception.NotFoundException;
 import com.ays.kardex.repository.ProductoRepository;
 import com.ays.kardex.repository.SedeRepository;
 import com.ays.kardex.service.ProductoService;
@@ -50,7 +51,7 @@ public class ProductoServiceImpl implements ProductoService {
                 producto.setSede(usuario.getSede());
             } else if (productoDTO.getSedeId() != null) {
                 Sede sede = sedeRepository.findById(productoDTO.getSedeId())
-                        .orElseThrow(() -> new BadRequestException("La sede indicada no existe"));
+                        .orElseThrow(() -> new NotFoundException("La sede indicada no existe"));
                 producto.setSede(sede);
             }
         }
@@ -77,7 +78,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         if (productoDTO.getSedeId() != null) {
             Sede sede = sedeRepository.findById(productoDTO.getSedeId())
-                    .orElseThrow(() -> new BadRequestException("La sede indicada no existe"));
+                    .orElseThrow(() -> new NotFoundException("La sede indicada no existe"));
             producto.setSede(sede);
         }
 
@@ -110,7 +111,7 @@ public class ProductoServiceImpl implements ProductoService {
         }
         if (productoDTO.getSedeId() != null) {
             Sede sede = sedeRepository.findById(productoDTO.getSedeId())
-                    .orElseThrow(() -> new BadRequestException("La sede indicada no existe"));
+                    .orElseThrow(() -> new NotFoundException("La sede indicada no existe"));
             producto.setSede(sede);
         }
 
@@ -136,7 +137,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     private Producto obtenerProductoPorId(Long id) {
         return productoRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("El producto indicado no existe"));
+                .orElseThrow(() -> new NotFoundException("El producto indicado no existe"));
     }
 
     private void validarSkuUnico(String sku, Long idActual) {

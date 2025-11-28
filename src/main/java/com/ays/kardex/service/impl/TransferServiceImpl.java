@@ -7,6 +7,7 @@ import com.ays.kardex.entity.Sede;
 import com.ays.kardex.entity.Transfer;
 import com.ays.kardex.entity.Usuario;
 import com.ays.kardex.exception.BadRequestException;
+import com.ays.kardex.exception.NotFoundException;
 import com.ays.kardex.repository.ProductoRepository;
 import com.ays.kardex.repository.SedeRepository;
 import com.ays.kardex.repository.TransferRepository;
@@ -33,12 +34,12 @@ public class TransferServiceImpl implements TransferService {
     public TransferResponse iniciarTransferencia(TransferInitiationRequest request) {
         Usuario usuario = obtenerUsuarioAutenticado();
         Producto producto = productoRepository.findById(request.getProductoId())
-                .orElseThrow(() -> new BadRequestException("El producto indicado no existe"));
+                .orElseThrow(() -> new NotFoundException("El producto indicado no existe"));
 
         Sede sedeOrigen = sedeRepository.findById(request.getSourceSedeId())
-                .orElseThrow(() -> new BadRequestException("La sede de origen indicada no existe"));
+                .orElseThrow(() -> new NotFoundException("La sede de origen indicada no existe"));
         Sede sedeDestino = sedeRepository.findById(request.getDestinationSedeId())
-                .orElseThrow(() -> new BadRequestException("La sede de destino indicada no existe"));
+                .orElseThrow(() -> new NotFoundException("La sede de destino indicada no existe"));
 
         if (sedeOrigen.getId().equals(sedeDestino.getId())) {
             throw new BadRequestException("La sede de origen y destino no pueden ser iguales");
@@ -69,7 +70,7 @@ public class TransferServiceImpl implements TransferService {
     public TransferResponse confirmarTransferencia(Long transferId) {
         Usuario usuario = obtenerUsuarioAutenticado();
         Transfer transferencia = transferRepository.findById(transferId)
-                .orElseThrow(() -> new BadRequestException("La transferencia indicada no existe"));
+                .orElseThrow(() -> new NotFoundException("La transferencia indicada no existe"));
 
         if (transferencia.getStatus() != Transfer.TransferStatus.IN_TRANSIT) {
             throw new BadRequestException("La transferencia ya fue procesada");

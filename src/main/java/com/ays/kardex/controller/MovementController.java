@@ -2,8 +2,11 @@ package com.ays.kardex.controller;
 
 import com.ays.kardex.dto.movement.MovementRequest;
 import com.ays.kardex.dto.movement.MovementResponse;
+import com.ays.kardex.exception.ApiError;
 import com.ays.kardex.service.MovementService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +32,8 @@ public class MovementController {
     @Operation(summary = "Registrar un movimiento de inventario")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Movimiento registrado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Producto o sede no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<MovementResponse> registrarMovimiento(@Valid @RequestBody MovementRequest request) {
         MovementResponse response = movementService.registrarMovimiento(request);
@@ -40,7 +44,8 @@ public class MovementController {
     @Operation(summary = "Listar movimientos de un producto")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado obtenido correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos")
+            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "404", description = "Producto o sede no encontrada", content = @Content(schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<List<MovementResponse>> obtenerMovimientos(@PathVariable("id") Long productoId,
                                                                      @RequestParam(value = "sede_id", required = false) Long sedeId) {
