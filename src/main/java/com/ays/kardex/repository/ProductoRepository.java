@@ -20,6 +20,9 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     boolean existsBySkuAndIdNot(String sku, Long id);
 
+    @Query("SELECT COALESCE(SUM(p.stock), 0) FROM Producto p WHERE p.sede.id = :sedeId")
+    Long calcularStockTotalPorSede(@Param("sedeId") Long sedeId);
+
     @Query("SELECT p FROM Producto p WHERE p.activo = true AND (" +
             "LOWER(p.nombre) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(p.sku) LIKE LOWER(CONCAT('%', :search, '%')))")
