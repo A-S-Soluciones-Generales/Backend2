@@ -27,4 +27,8 @@ public class Producto {
 
     @Column(nullable = false)
     private Integer stock;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sede_id")
+    private Sede sede;
 }

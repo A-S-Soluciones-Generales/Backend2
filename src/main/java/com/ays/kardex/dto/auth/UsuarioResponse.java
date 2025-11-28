@@ -1,24 +1,20 @@
 package com.ays.kardex.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Schema(description = "Información del usuario actual")
+@Schema(description = "Información pública del usuario")
 public class UsuarioResponse {
 
     @Schema(description = "ID del usuario", example = "1")
     private Long id;
 
-    @Schema(description = "Correo electrónico", example = "juan@email.com")
+    @Schema(description = "Email del usuario", example = "usuario@email.com")
     private String email;
 
     @Schema(description = "Nombre del usuario", example = "Juan")
@@ -27,12 +23,18 @@ public class UsuarioResponse {
     @Schema(description = "Apellido del usuario", example = "Pérez")
     private String apellido;
 
-    @Schema(description = "Rol del usuario", example = "USER")
+    @Schema(description = "Rol del usuario", example = "VENDEDOR")
     private String role;
+
+    @Schema(description = "Empresa asociada", example = "1")
+    private Long companyId;
+
+    @Schema(description = "Sede asociada", example = "2")
+    private Long sedeId;
 
     @Schema(description = "Estado de la cuenta", example = "true")
     private Boolean activo;
 
-    @Schema(description = "Fecha de creación de la cuenta")
+    @Schema(description = "Fecha de creación", example = "2024-01-15T10:30:00")
     private LocalDateTime fechaCreacion;
 }

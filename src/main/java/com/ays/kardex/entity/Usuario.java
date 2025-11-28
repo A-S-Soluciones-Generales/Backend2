@@ -41,6 +41,14 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sede_id")
+    private Sede sede;
+
     @Builder.Default
     @Column(name = "activo")
     private Boolean activo = true;
@@ -63,8 +71,8 @@ public class Usuario implements UserDetails {
     }
 
     public enum Role {
-        USER,
-        ADMIN
+        GLOBAL_ADMIN,
+        VENDEDOR
     }
 
     @Override

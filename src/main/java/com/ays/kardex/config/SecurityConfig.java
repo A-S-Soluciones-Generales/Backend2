@@ -1,6 +1,7 @@
 package com.ays.kardex.config;
 
 import com.ays.kardex.security.JwtAuthenticationFilter;
+import com.ays.kardex.security.SedeAccessFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final DaoAuthenticationProvider authenticationProvider;
+    private final SedeAccessFilter sedeAccessFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -70,7 +72,8 @@ public class SecurityConfig {
                         })
                 )
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(sedeAccessFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

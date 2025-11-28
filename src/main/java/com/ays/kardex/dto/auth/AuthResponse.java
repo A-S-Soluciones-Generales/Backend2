@@ -31,8 +31,14 @@ public class AuthResponse {
     @Schema(description = "Apellido del usuario", example = "Pérez")
     private String apellido;
 
-    @Schema(description = "Rol del usuario", example = "USER")
+    @Schema(description = "Rol del usuario", example = "VENDEDOR")
     private String role;
+
+    @Schema(description = "Empresa asociada", example = "1")
+    private Long companyId;
+
+    @Schema(description = "Sede asociada", example = "2")
+    private Long sedeId;
 
     @Schema(description = "Mensaje de respuesta", example = "Inicio de sesión exitoso")
     private String mensaje;
