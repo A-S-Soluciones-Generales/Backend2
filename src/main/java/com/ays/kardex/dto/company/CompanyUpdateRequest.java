@@ -5,22 +5,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class CompanyRequest {
+public class CompanyUpdateRequest {
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Schema(description = "Nombre comercial de la empresa", example = "Ays Solutions")
-    private String nombre;
-
-    @NotBlank(message = "El RUC es obligatorio")
-    @Schema(description = "Identificador fiscal único", example = "20123456789")
-    private String ruc;
-
+    @NotBlank(message = "La razón social es obligatoria")
     @Schema(description = "Razón social registrada", example = "AYS SOLUTIONS S.A.")
     private String razonSocial;
 
+    @NotBlank(message = "La dirección fiscal es obligatoria")
     @Schema(description = "Dirección fiscal de la empresa", example = "Av. Principal 123")
     private String direccionFiscal;
 
+    @NotBlank(message = "El teléfono es obligatorio")
     @Schema(description = "Teléfono de contacto", example = "+51 999 888 777")
     private String telefono;
 }

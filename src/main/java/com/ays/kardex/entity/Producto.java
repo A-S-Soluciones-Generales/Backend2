@@ -22,6 +22,9 @@ public class Producto {
     @Column(length = 255)
     private String descripcion;
 
+    @Column(nullable = false, unique = true, length = 50)
+    private String sku;
+
     @Column(nullable = false)
     private Double precio;
 
@@ -37,4 +40,7 @@ public class Producto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sede_id")
     private Sede sede;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean activo = true;
 }

@@ -17,6 +17,15 @@ public class CompanyResponse {
     @Schema(description = "RUC o ID fiscal", example = "20123456789")
     private String ruc;
 
+    @Schema(description = "Razón social registrada", example = "AYS SOLUTIONS S.A.")
+    private String razonSocial;
+
+    @Schema(description = "Dirección fiscal", example = "Av. Principal 123")
+    private String direccionFiscal;
+
+    @Schema(description = "Teléfono de contacto", example = "+51 999 888 777")
+    private String telefono;
+
     @Schema(description = "Estado de la empresa", example = "true")
     private Boolean activo;
 }
