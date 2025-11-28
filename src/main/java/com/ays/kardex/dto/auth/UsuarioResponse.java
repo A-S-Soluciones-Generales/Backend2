@@ -32,6 +32,12 @@ public class UsuarioResponse {
     @Schema(description = "Sede asociada", example = "2")
     private Long sedeId;
 
+    @Schema(description = "Nombre de la sede asociada", example = "Sucursal Centro")
+    private String sedeNombre;
+
+    @Schema(description = "Documento de identidad", example = "12345678")
+    private String documento;
+
     @Schema(description = "Estado de la cuenta", example = "true")
     private Boolean activo;
 

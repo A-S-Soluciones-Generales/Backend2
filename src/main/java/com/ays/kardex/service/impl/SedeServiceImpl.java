@@ -138,9 +138,11 @@ public class SedeServiceImpl implements SedeService {
                 .email(usuario.getEmail())
                 .nombre(usuario.getNombre())
                 .apellido(usuario.getApellido())
+                .documento(usuario.getDocumento())
                 .role(usuario.getRole().name())
                 .companyId(usuario.getCompany() != null ? usuario.getCompany().getId() : null)
                 .sedeId(usuario.getSede() != null ? usuario.getSede().getId() : null)
+                .sedeNombre(usuario.getSede() != null ? usuario.getSede().getNombre() : null)
                 .activo(usuario.getActivo())
                 .fechaCreacion(usuario.getFechaCreacion())
                 .build();

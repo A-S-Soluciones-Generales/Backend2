@@ -1,11 +1,13 @@
 package com.ays.kardex.controller;
 
+import com.ays.kardex.dto.auth.UsuarioResponse;
 import com.ays.kardex.dto.company.CompanyRequest;
 import com.ays.kardex.dto.company.CompanyResponse;
 import com.ays.kardex.dto.company.CompanyStatusRequest;
 import com.ays.kardex.dto.company.CompanyUpdateRequest;
 import com.ays.kardex.dto.sede.SedeResponse;
 import com.ays.kardex.service.CompanyService;
+import com.ays.kardex.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CompanyService companyService;
+    private final UsuarioService usuarioService;
 
     @PostMapping
     @PreAuthorize("hasRole('GLOBAL_ADMIN')")
@@ -70,6 +73,13 @@ public class CompanyController {
     @Operation(summary = "Listar sedes de una empresa", description = "Obtiene todas las sedes asociadas a la empresa")
     public ResponseEntity<List<SedeResponse>> listarSedes(@PathVariable Long id) {
         return ResponseEntity.ok(companyService.listarSedes(id));
+    }
+
+    @GetMapping("/{id}/users")
+    @PreAuthorize("hasRole('GLOBAL_ADMIN')")
+    @Operation(summary = "Usuarios activos por empresa", description = "Lista los usuarios activos asociados a la empresa")
+    public ResponseEntity<List<UsuarioResponse>> listarUsuarios(@PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.listarUsuariosPorCompany(id));
     }
 
     @PatchMapping("/{id}/status")
