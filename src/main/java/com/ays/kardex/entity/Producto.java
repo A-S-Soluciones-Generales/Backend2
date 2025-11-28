@@ -28,6 +28,9 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
+    @Column(name = "average_cost", nullable = false)
+    private Double averageCost = 0.0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sede_id")
     private Sede sede;

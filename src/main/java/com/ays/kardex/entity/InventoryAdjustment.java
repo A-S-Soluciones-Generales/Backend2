@@ -1,18 +1,17 @@
 package com.ays.kardex.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "movements")
+@Table(name = "inventory_adjustments")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Movement {
+public class InventoryAdjustment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +19,22 @@ public class Movement {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private MovementType type;
+    private AdjustmentType type;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "unit_cost")
-    private Double unitCost;
-
     @Column(name = "stock_resulting", nullable = false)
     private Integer stockResulting;
+
+    @Column(name = "reason_code", nullable = false, length = 50)
+    private String reasonCode;
+
+    @Column(nullable = false, length = 255)
+    private String note;
+
+    @Column(name = "value_impact", nullable = false)
+    private Double valueImpact;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
@@ -47,8 +52,8 @@ public class Movement {
         fechaCreacion = LocalDateTime.now();
     }
 
-    public enum MovementType {
-        COMPRA,
-        VENTA
+    public enum AdjustmentType {
+        NEGATIVE,
+        POSITIVE
     }
 }
